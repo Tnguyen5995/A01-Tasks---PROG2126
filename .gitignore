@@ -1,0 +1,12 @@
+# Visual Studio local cache
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Copilot / VS index DBs (extra safety)
+**/CopilotIndices/
+**/CodeChunks.db
+**/SemanticSymbols.db
+**/FileContentIndex/
