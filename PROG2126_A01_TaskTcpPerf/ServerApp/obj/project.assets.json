@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "Common/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Common.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Common.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Common/1.0.0": {
+      "type": "project",
+      "path": "../Common/Common.csproj",
+      "msbuildProject": "../Common/Common.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "Common >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\thanh\\.nuget\\packages\\": {},
@@ -39,7 +58,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Conestoga\\level4\\Windows Network Programming\\A01-Tasks---PROG2126\\PROG2126_A01_TaskTcpPerf\\Common\\Common.csproj": {
+              "projectPath": "C:\\Conestoga\\level4\\Windows Network Programming\\A01-Tasks---PROG2126\\PROG2126_A01_TaskTcpPerf\\Common\\Common.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
