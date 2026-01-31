@@ -1,7 +1,7 @@
 ﻿/*  
  *  FILE          : ClientLoadGenerator.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
- *  PROGRAMMER    : Tuan Thanh Nguyen
+ *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
  *  FIRST VERSION : 2026-01-28
  *  DESCRIPTION   :
  *    Runs multiple client workers (Task or Thread). Each worker connects to the server

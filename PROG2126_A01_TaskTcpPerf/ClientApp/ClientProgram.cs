@@ -1,7 +1,7 @@
 ﻿/*  
  *  FILE          : Program.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
- *  PROGRAMMER    : Tuan Thanh Nguyen
+ *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
  *  FIRST VERSION : 2026-01-28
  *  DESCRIPTION   :
  *    Entry point for the TCP client load generator. A single client computer can
@@ -14,7 +14,7 @@ using Common;
 
 namespace ClientApp
 {
-    internal static class Program
+    internal static class ClientProgram
     {
         private static int Main(string[] args)
         {
@@ -81,37 +81,40 @@ namespace ClientApp
             out int delayMs,
             out ConcurrencyMode concurrencyMode)
         {
-            serverIp = "127.0.0.1";
+            serverIp = "127.0.0.1"; //default server IP
             port = AppConstants.DefaultPort;
-            workers = 5;
-            payloadBytes = 256;
-            delayMs = 0;
-            concurrencyMode = ConcurrencyMode.Task;
+            workers = 5; //number of client connections to create
+            payloadBytes = 256; //size of each message sent to the server
+            delayMs = 0; //delay between messages
+            concurrencyMode = ConcurrencyMode.Task; 
 
             int index = 0;
-
+            //loop to go thorouhg all command line arguments one by one 
             while (index < args.Length)
             {
+                //reads the current argument
                 string key = args[index];
 
+                //if the user specificed a server ip address
                 if ((key == "--server") && ((index + 1) < args.Length))
                 {
                     serverIp = args[index + 1];
                     index = index + 2;
                 }
+                //if user specified port
                 else if ((key == "--port") && ((index + 1) < args.Length))
                 {
-                    port = Convert.ToInt32(args[index + 1]);
+                    port = Convert.ToInt32(args[index + 1]); //converts port value from text to integer
                     index = index + 2;
                 }
                 else if ((key == "--workers") && ((index + 1) < args.Length))
                 {
-                    workers = Convert.ToInt32(args[index + 1]);
+                    workers = Convert.ToInt32(args[index + 1]); //number of simulated clients created
                     index = index + 2;
                 }
                 else if ((key == "--payloadBytes") && ((index + 1) < args.Length))
                 {
-                    payloadBytes = Convert.ToInt32(args[index + 1]);
+                    payloadBytes = Convert.ToInt32(args[index + 1]); 
                     index = index + 2;
                 }
                 else if ((key == "--delayMs") && ((index + 1) < args.Length))

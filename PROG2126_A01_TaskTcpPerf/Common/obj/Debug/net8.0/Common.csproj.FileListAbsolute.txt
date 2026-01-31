@@ -1,0 +1,12 @@
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.deps.json
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.dll
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.pdb
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.AssemblyInfoInputs.cache
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.AssemblyInfo.cs
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.csproj.CoreCompileInputs.cache
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.sourcelink.json
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.dll
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\refint\Common.dll
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.pdb
+C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\ref\Common.dll

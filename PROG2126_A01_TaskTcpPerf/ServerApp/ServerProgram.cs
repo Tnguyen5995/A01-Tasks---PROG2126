@@ -1,7 +1,7 @@
 ﻿/*  
  *  FILE          : Program.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
- *  PROGRAMMER    : Tuan Thanh Nguyen
+ *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
  *  FIRST VERSION : 2026-01-28
  *  DESCRIPTION   :
  *    Entry point for the TCP logging server. The server accepts multiple clients,
@@ -14,7 +14,7 @@ using Common;
 
 namespace ServerApp
 {
-    internal static class Program
+    internal static class ServerProgram
     {
         private static int Main(string[] args)
         {

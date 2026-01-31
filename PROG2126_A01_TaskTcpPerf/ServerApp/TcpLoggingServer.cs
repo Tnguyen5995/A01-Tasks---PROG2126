@@ -1,7 +1,7 @@
 ﻿/*  
  *  FILE          : TcpLoggingServer.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
- *  PROGRAMMER    : Tuan Thanh Nguyen
+ *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
  *  FIRST VERSION : 2026-01-28
  *  DESCRIPTION   :
  *    Implements a TCP server that:
@@ -210,9 +210,7 @@ namespace ServerApp
         // RETURNS       :
         //   void
         //
-        private void HandleClient(
-            TcpClient client,
-            CancellationToken cancellationToken)
+        private void HandleClient(TcpClient client,CancellationToken cancellationToken)
         {
             string remoteEndpoint = "unknown";
 
@@ -233,11 +231,30 @@ namespace ServerApp
 
                     while (isClientDone == false)
                     {
-                        if ((cancellationToken.IsCancellationRequested == true) ||
-                            (IsShutdownRequested() == true))
+                        if ((cancellationToken.IsCancellationRequested == true) || (IsShutdownRequested() == true))
                         {
+                            //notify the client to stop before closing the connection
+                            try
+                            {
+                                if (networkStream.CanWrite == true)
+                                {
+                                    string sendError;
+
+                                    MessageProtocol.SendStringMessage(
+                                        networkStream,
+                                        AppConstants.ResponseStop,
+                                        AppConstants.MaxMessageBytes,
+                                        out sendError);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                //Client may already be disconnected, ignore and exit gracefully.
+                            }
+
                             isClientDone = true;
                         }
+
                         else
                         {
                             string requestMessage;
@@ -252,19 +269,16 @@ namespace ServerApp
                             if (received == true)
                             {
                                 bool writeOk = AppendLogLine(remoteEndpoint, requestMessage);
-
                                 if (writeOk == false)
                                 {
                                     RequestShutdown();
                                 }
-
                                 Interlocked.Increment(ref _messageCount);
 
                                 if (_currentFileBytes >= _maxFileBytes)
                                 {
                                     RequestShutdown();
                                 }
-
                                 string responseText = AppConstants.ResponseOk;
 
                                 if (IsShutdownRequested() == true)
@@ -294,7 +308,7 @@ namespace ServerApp
                             {
                                 if (receiveError.ToLowerInvariant().Contains("timeout") == true)
                                 {
-                                    // Non-fatal: let loop continue and re-check cancellation/shutdown.
+                                    //let loop continue and re-check cancellation/shutdown.
                                 }
                                 else
                                 {

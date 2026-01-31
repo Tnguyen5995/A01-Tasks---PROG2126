@@ -1,7 +1,7 @@
 ﻿/*  
  *  FILE          : ClientWorker.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
- *  PROGRAMMER    : Tuan Thanh Nguyen
+ *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
  *  FIRST VERSION : 2026-01-28
  *  DESCRIPTION   :
  *    Implements one client worker. Uses synchronous request/response TCP messages:
