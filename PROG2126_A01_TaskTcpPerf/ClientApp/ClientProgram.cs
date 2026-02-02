@@ -155,9 +155,5 @@ namespace ClientApp
 
             return;
         }
-
-        // add fields near the other counters
-        private long _totalLatencyTicks;
-        private long _latencySampleCount;
     }
 }
