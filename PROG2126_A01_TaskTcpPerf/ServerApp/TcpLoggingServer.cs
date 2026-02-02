@@ -2,7 +2,7 @@
  *  FILE          : TcpLoggingServer.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
  *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
- *  FIRST VERSION : 2026-01-28
+ *  FIRST VERSION : 2026-01-20
  *  DESCRIPTION   :
  *    Implements a TCP server that:
  *      - Accepts multiple clients (from other computers)
