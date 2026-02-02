@@ -2,7 +2,7 @@
  *  FILE          : Program.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
  *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
- *  FIRST VERSION : 2026-01-28
+ *  FIRST VERSION : 2026-01-20
  *  DESCRIPTION   :
  *    Entry point for the TCP client load generator. A single client computer can
  *    run multiple client workers (Task or Thread). Each worker uses synchronous

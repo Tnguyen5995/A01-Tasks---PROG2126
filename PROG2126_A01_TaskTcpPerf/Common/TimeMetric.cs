@@ -2,7 +2,7 @@
  *  FILE          : TimeMetrics.cs
  *  PROJECT       : PROG2126 - Assignment - Task TCP/IP Performance
  *  PROGRAMMER    : Tuan Thanh Nguyen, Burhan Shibli, Mohid Ali
- *  FIRST VERSION : 2026-01-28
+ *  FIRST VERSION : 2026-01-20
  *  DESCRIPTION   :
  *    This file contains simple time-based metrics to support performance experiments.
  */
