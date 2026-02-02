@@ -273,17 +273,24 @@ namespace ServerApp
 
                             if (received == true)
                             {
-                                bool writeOk = AppendLogLine(remoteEndpoint, requestMessage);
+                                long startTicks = Stopwatch.GetTimestamp();
+
+                                Interlocked.Increment(ref _messageCount);
+
+                                long endTicks = Stopwatch.GetTimestamp();
+                                double latencyMs = (endTicks - startTicks) * 1000.0 / Stopwatch.Frequency;
+
+                                bool writeOk = AppendLogLine(remoteEndpoint, latencyMs);
                                 if (writeOk == false)
                                 {
                                     RequestShutdown();
                                 }
-                                Interlocked.Increment(ref _messageCount);
 
                                 if (_currentFileBytes >= _maxFileBytes)
                                 {
                                     RequestShutdown();
                                 }
+
                                 string responseText = AppConstants.ResponseOk;
 
                                 if (IsShutdownRequested() == true)
@@ -339,11 +346,11 @@ namespace ServerApp
         //   updating the current file size.
         // PARAMETERS    :
         //   string remoteEndpoint : Client endpoint
-        //   string message        : Received message
+        //   double latencyMs      : Server-side latency in milliseconds
         // RETURNS       :
         //   bool : True if the write succeeded, false otherwise
         //
-        private bool AppendLogLine(string remoteEndpoint, string message)
+        private bool AppendLogLine(string remoteEndpoint, double latencyMs)
         {
             bool isSuccessful = false;
 
@@ -354,7 +361,7 @@ namespace ServerApp
                 lock (_fileLock)
                 {
                     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    string line = timestamp + " | " + remoteEndpoint + " | " + message;
+                    string line = timestamp + " | " + remoteEndpoint + " | " + latencyMs.ToString("F3");
 
                     _streamWriter.WriteLine(line);
                     _streamWriter.Flush();
