@@ -49,6 +49,9 @@ namespace ServerApp
         private readonly Stopwatch _serverStopwatch;
         private readonly TimeMetrics _serverWriteTiming;
 
+        private readonly bool _overwrite;
+
+
         /*
          *   NAME    : TcpLoggingServer
          *   PURPOSE : The TcpLoggingServer class models a TCP server that receives messages from
@@ -85,6 +88,8 @@ namespace ServerApp
             _messageCount = 0;
             _serverStopwatch = new Stopwatch();
             _serverWriteTiming = new TimeMetrics();
+
+
         }
 
         //

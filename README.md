@@ -7,6 +7,14 @@ Server (on Computer A)
 Example (Task mode):
 ServerApp.exe --port 5000 --maxMb 5 --log ServerLog.txt --mode task
 
+# for longer run
+# server
+dotnet run --project PROG2126_A01_TaskTcpPerf/ServerApp -- --maxMb 500 --log ServerLog.txt --mode task
+
+# client
+dotnet run --project PROG2126_A01_TaskTcpPerf/ClientApp -- --workers 1 --payloadBytes 65536 --delayMs 5 --mode task
+
+
 
 Thread mode:
 ServerApp.exe --port 5000 --maxMb 5 --log ServerLog.txt --mode thread

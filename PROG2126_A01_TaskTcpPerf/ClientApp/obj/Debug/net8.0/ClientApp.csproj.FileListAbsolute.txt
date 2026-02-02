@@ -17,3 +17,22 @@ C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\ne
 C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.pdb
 C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.genruntimeconfig.cache
 C:\PROG2126\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ref\ClientApp.dll
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\ClientApp.exe
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\ClientApp.deps.json
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\ClientApp.runtimeconfig.json
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\ClientApp.dll
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\ClientApp.pdb
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\Common.dll
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\bin\Debug\net8.0\Common.pdb
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.csproj.AssemblyReference.cache
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.AssemblyInfoInputs.cache
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.AssemblyInfo.cs
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.csproj.CoreCompileInputs.cache
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.sourcelink.json
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.csproj.Up2Date
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.dll
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\refint\ClientApp.dll
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.pdb
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ClientApp.genruntimeconfig.cache
+C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\ClientApp\obj\Debug\net8.0\ref\ClientApp.dll

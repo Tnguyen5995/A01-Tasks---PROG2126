@@ -14,7 +14,7 @@ namespace Common
     {
         public const int DefaultPort = 5000;
 
-        public const int MaxMessageBytes = 64 * 1024;   // 64 KB safety limit
+        public const int MaxMessageBytes = 1024 * 1024;   // 1 MB safety limit
         public const int SocketReadTimeoutMs = 1000;
         public const int SocketWriteTimeoutMs = 1000;
 

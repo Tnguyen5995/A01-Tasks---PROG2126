@@ -22,8 +22,8 @@ namespace ClientApp
 
             string serverIp = "127.0.0.1";
             int port = AppConstants.DefaultPort;
-            int workers = 5;
-            int payloadBytes = 256;
+            int workers = 2;
+            int payloadBytes = 64;
             int delayMs = 0;
             ConcurrencyMode concurrencyMode = ConcurrencyMode.Task;
 
@@ -83,10 +83,14 @@ namespace ClientApp
         {
             serverIp = "127.0.0.1"; //default server IP
             port = AppConstants.DefaultPort;
-            workers = 5; //number of client connections to create
-            payloadBytes = 256; //size of each message sent to the server
+            workers = 3; //number of client connections to create
+            payloadBytes = 64; //size of each message sent to the server
             delayMs = 0; //delay between messages
-            concurrencyMode = ConcurrencyMode.Task; 
+            concurrencyMode = ConcurrencyMode.Task;
+            bool overwrite = false;
+
+
+            int maxMb = 200;
 
             int index = 0;
             //loop to go thorouhg all command line arguments one by one 
@@ -122,6 +126,12 @@ namespace ClientApp
                     delayMs = Convert.ToInt32(args[index + 1]);
                     index = index + 2;
                 }
+                else if ((key == "--overwrite") && ((index + 1) < args.Length))
+                {
+                    overwrite = Convert.ToBoolean(args[index + 1]);
+                    index = index + 2;
+                }
+
                 else if ((key == "--mode") && ((index + 1) < args.Length))
                 {
                     string modeText = args[index + 1].Trim().ToLowerInvariant();
