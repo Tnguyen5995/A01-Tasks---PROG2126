@@ -10,3 +10,8 @@
 **/CodeChunks.db
 **/SemanticSymbols.db
 **/FileContentIndex/
+
+# Ignore build outputs
+**/bin/
+**/obj/
+.vs/
