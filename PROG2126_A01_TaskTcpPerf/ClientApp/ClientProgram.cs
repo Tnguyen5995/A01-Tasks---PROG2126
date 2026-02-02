@@ -83,7 +83,7 @@ namespace ClientApp
         {
             serverIp = "192.168.68.121"; //default server IP
             port = AppConstants.DefaultPort;
-            workers = 3; //number of client connections to create
+            workers = 5; //number of client connections to create
             payloadBytes = 64; //size of each message sent to the server
             delayMs = 0; //delay between messages
             concurrencyMode = ConcurrencyMode.Task;
