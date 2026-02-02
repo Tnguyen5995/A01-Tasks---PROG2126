@@ -46,10 +46,15 @@ namespace ServerApp
         private int _shutdownRequestedFlag;
 
         private long _messageCount;
+        private long _totalLatencyMs;
         private readonly Stopwatch _serverStopwatch;
         private readonly TimeMetrics _serverWriteTiming;
 
         private readonly bool _overwrite;
+
+        // add fields near the other counters
+        private long _totalLatencyTicks;
+        private long _latencySampleCount;
 
 
         /*
@@ -89,7 +94,9 @@ namespace ServerApp
             _serverStopwatch = new Stopwatch();
             _serverWriteTiming = new TimeMetrics();
 
-
+            // initialize in constructor
+            _totalLatencyTicks = 0;
+            _latencySampleCount = 0;
         }
 
         //
@@ -223,7 +230,7 @@ namespace ServerApp
             {
                 if (client.Client.RemoteEndPoint != null)
                 {
-                    remoteEndpoint = client.Client.RemoteEndPoint.ToString();
+                    remoteEndpoint = NormalizeEndpoint(client.Client.RemoteEndPoint.ToString());
                 }
 
                 using (client)
@@ -273,17 +280,36 @@ namespace ServerApp
 
                             if (received == true)
                             {
-                                bool writeOk = AppendLogLine(remoteEndpoint, requestMessage);
+                                long startTicks = Stopwatch.GetTimestamp();
+
+                                int workerId;
+                                long sequence;
+                                string data;
+
+                                ParseClientMessage(requestMessage, out workerId, out sequence, out data);
+
+                                int serverThreadId = Environment.CurrentManagedThreadId;
+
+                                bool writeOk = AppendLogLine(
+                                    remoteEndpoint,
+                                    workerId,
+                                    sequence,
+                                    data,
+                                    serverThreadId,
+                                    startTicks);
+
                                 if (writeOk == false)
                                 {
                                     RequestShutdown();
                                 }
+
                                 Interlocked.Increment(ref _messageCount);
 
                                 if (_currentFileBytes >= _maxFileBytes)
                                 {
                                     RequestShutdown();
                                 }
+
                                 string responseText = AppConstants.ResponseOk;
 
                                 if (IsShutdownRequested() == true)
@@ -338,33 +364,51 @@ namespace ServerApp
         //   Appends a single line to the shared log file in a thread-safe manner,
         //   updating the current file size.
         // PARAMETERS    :
-        //   string remoteEndpoint : Client endpoint
-        //   string message        : Received message
+        //   string remoteEndpoint : Client endpoint (IP only)
+        //   int workerId          : Client worker id
+        //   long sequence         : Client sequence number
+        //   string data           : Client payload data
+        //   int serverThreadId    : Server thread id handling the request
+        //   long startTicks       : Start ticks for latency measurement
         // RETURNS       :
         //   bool : True if the write succeeded, false otherwise
         //
-        private bool AppendLogLine(string remoteEndpoint, string message)
+        private bool AppendLogLine(
+            string remoteEndpoint,
+            int workerId,
+            long sequence,
+            string data,
+            int serverThreadId,
+            long startTicks)
         {
             bool isSuccessful = false;
 
             try
             {
-                long startTicks = Stopwatch.GetTimestamp();
-
                 lock (_fileLock)
                 {
-                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    string line = timestamp + " | " + remoteEndpoint + " | " + message;
+                    long endTicks = Stopwatch.GetTimestamp();
+                    long latencyTicks = endTicks - startTicks;
+                    double latencyMs = latencyTicks * 1000.0 / Stopwatch.Frequency;
+
+                    _totalLatencyTicks = _totalLatencyTicks + latencyTicks;
+                    _latencySampleCount = _latencySampleCount + 1;
+
+                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    string line =
+                        timestamp + " | " +
+                        "IPv4=" + remoteEndpoint + " | " +
+                        "clientWorker=" + workerId + " | " +
+                        "serverThread=" + serverThreadId + " | " +
+                        "seq=" + sequence + " | " +
+                        "data=" + data + " | " +
+                        "latencyMs=" + latencyMs.ToString("F6");
 
                     _streamWriter.WriteLine(line);
                     _streamWriter.Flush();
 
                     _currentFileBytes = _fileStream.Length;
                 }
-
-                long endTicks = Stopwatch.GetTimestamp();
-                long elapsedTicks = endTicks - startTicks;
-                _serverWriteTiming.AddSample(elapsedTicks);
 
                 isSuccessful = true;
             }
@@ -588,9 +632,126 @@ namespace ServerApp
             Console.WriteLine("Msgs/sec: " + messagesPerSecond.ToString("F3"));
             Console.WriteLine("Bytes/sec: " + bytesPerSecond.ToString("F3"));
             Console.WriteLine("File-write timing: " + _serverWriteTiming.GetSummary(Stopwatch.Frequency));
+            Console.WriteLine("Average latency (ms): " + (_totalLatencyMs / _messageCount).ToString("F3"));
+
+            // inside PrintSummary, compute and print average latency
+            double averageLatencyMs = 0.0;
+
+            if (_latencySampleCount > 0)
+            {
+                averageLatencyMs = (_totalLatencyTicks * 1000.0) / (Stopwatch.Frequency * _latencySampleCount);
+            }
+
+            Console.WriteLine("Avg latency (ms): " + averageLatencyMs.ToString("F6"));
             Console.WriteLine("==========================");
 
             return;
+        }
+
+        //
+        // FUNCTION      : ParseClientMessage
+        // DESCRIPTION   :
+        //   Extracts worker, seq and data fields from the client payload.
+        // PARAMETERS    :
+        //   string message    : Raw client message
+        //   out int workerId  : Parsed worker id (or -1 if missing)
+        //   out long sequence : Parsed sequence number (or -1 if missing)
+        //   out string data   : Parsed data payload (or empty if missing)
+        // RETURNS       :
+        //   void
+        //
+        private void ParseClientMessage(
+            string message,
+            out int workerId,
+            out long sequence,
+            out string data)
+        {
+            workerId = -1;
+            sequence = -1;
+            data = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(message) == true)
+            {
+                return;
+            }
+
+            int workerIndex = message.IndexOf("worker=", StringComparison.OrdinalIgnoreCase);
+            if (workerIndex >= 0)
+            {
+                int workerValueStart = workerIndex + 7;
+                int workerValueEnd = message.IndexOf(',', workerValueStart);
+
+                if (workerValueEnd < 0)
+                {
+                    workerValueEnd = message.Length;
+                }
+
+                string workerText = message.Substring(workerValueStart, workerValueEnd - workerValueStart).Trim();
+                int parsedWorkerId = -1;
+
+                if (int.TryParse(workerText, out parsedWorkerId) == true)
+                {
+                    workerId = parsedWorkerId;
+                }
+            }
+
+            int seqIndex = message.IndexOf("seq=", StringComparison.OrdinalIgnoreCase);
+            if (seqIndex >= 0)
+            {
+                int seqValueStart = seqIndex + 4;
+                int seqValueEnd = message.IndexOf(',', seqValueStart);
+
+                if (seqValueEnd < 0)
+                {
+                    seqValueEnd = message.Length;
+                }
+
+                string seqText = message.Substring(seqValueStart, seqValueEnd - seqValueStart).Trim();
+                long parsedSequence = -1;
+
+                if (long.TryParse(seqText, out parsedSequence) == true)
+                {
+                    sequence = parsedSequence;
+                }
+            }
+
+            int dataIndex = message.IndexOf("data=", StringComparison.OrdinalIgnoreCase);
+            if (dataIndex >= 0)
+            {
+                int dataValueStart = dataIndex + 5;
+
+                if (dataValueStart <= message.Length)
+                {
+                    data = message.Substring(dataValueStart);
+                }
+            }
+
+            return;
+        }
+
+        //
+        // FUNCTION      : NormalizeEndpoint
+        // DESCRIPTION   :
+        //   Removes the port from an endpoint string if present.
+        // PARAMETERS    :
+        //   string endpoint : Raw endpoint (e.g., "192.168.68.123:51540")
+        // RETURNS       :
+        //   string : Endpoint without port (e.g., "192.168.68.123")
+        //
+        private string NormalizeEndpoint(string endpoint)
+        {
+            if (string.IsNullOrWhiteSpace(endpoint) == true)
+            {
+                return (string.Empty);
+            }
+
+            int colonIndex = endpoint.LastIndexOf(':');
+            if (colonIndex > 0)
+            {
+                return (endpoint.Substring(0, colonIndex));
+            }
+
+            return (endpoint);
         }
     }
 }
