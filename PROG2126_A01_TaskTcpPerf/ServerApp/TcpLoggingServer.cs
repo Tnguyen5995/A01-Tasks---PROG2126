@@ -282,12 +282,22 @@ namespace ServerApp
                             {
                                 long startTicks = Stopwatch.GetTimestamp();
 
+                                int workerId;
                                 long sequence;
                                 string data;
 
-                                ParseClientMessage(requestMessage, out sequence, out data);
+                                ParseClientMessage(requestMessage, out workerId, out sequence, out data);
 
-                                bool writeOk = AppendLogLine(remoteEndpoint, sequence, data, startTicks);
+                                int serverThreadId = Environment.CurrentManagedThreadId;
+
+                                bool writeOk = AppendLogLine(
+                                    remoteEndpoint,
+                                    workerId,
+                                    sequence,
+                                    data,
+                                    serverThreadId,
+                                    startTicks);
+
                                 if (writeOk == false)
                                 {
                                     RequestShutdown();
@@ -354,14 +364,22 @@ namespace ServerApp
         //   Appends a single line to the shared log file in a thread-safe manner,
         //   updating the current file size.
         // PARAMETERS    :
-        //   string remoteEndpoint : Client endpoint
+        //   string remoteEndpoint : Client endpoint (IP only)
+        //   int workerId          : Client worker id
         //   long sequence         : Client sequence number
         //   string data           : Client payload data
+        //   int serverThreadId    : Server thread id handling the request
         //   long startTicks       : Start ticks for latency measurement
         // RETURNS       :
         //   bool : True if the write succeeded, false otherwise
         //
-        private bool AppendLogLine(string remoteEndpoint, long sequence, string data, long startTicks)
+        private bool AppendLogLine(
+            string remoteEndpoint,
+            int workerId,
+            long sequence,
+            string data,
+            int serverThreadId,
+            long startTicks)
         {
             bool isSuccessful = false;
 
@@ -370,22 +388,21 @@ namespace ServerApp
                 lock (_fileLock)
                 {
                     long endTicks = Stopwatch.GetTimestamp();
-                    double latencyMs = (endTicks - startTicks) * 1000.0 / Stopwatch.Frequency;
-
-                    // --- ADDITIONAL LATENCY TRACKING ---
                     long latencyTicks = endTicks - startTicks;
+                    double latencyMs = latencyTicks * 1000.0 / Stopwatch.Frequency;
 
                     _totalLatencyTicks = _totalLatencyTicks + latencyTicks;
                     _latencySampleCount = _latencySampleCount + 1;
-                    // ---
 
                     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     string line =
-                        timestamp + " | " + "IPv4:" +
-                        remoteEndpoint + " | " + "seq=" +
-                        sequence + " | " + "data=" +
-                        data + " | " + "latencyMs=" +
-                        latencyMs.ToString("F6");
+                        timestamp + " | " +
+                        "IPv4=" + remoteEndpoint + " | " +
+                        "clientWorker=" + workerId + " | " +
+                        "serverThread=" + serverThreadId + " | " +
+                        "seq=" + sequence + " | " +
+                        "data=" + data + " | " +
+                        "latencyMs=" + latencyMs.ToString("F6");
 
                     _streamWriter.WriteLine(line);
                     _streamWriter.Flush();
@@ -634,22 +651,48 @@ namespace ServerApp
         //
         // FUNCTION      : ParseClientMessage
         // DESCRIPTION   :
-        //   Extracts seq and data fields from the client payload.
+        //   Extracts worker, seq and data fields from the client payload.
         // PARAMETERS    :
-        //   string message : Raw client message
+        //   string message    : Raw client message
+        //   out int workerId  : Parsed worker id (or -1 if missing)
         //   out long sequence : Parsed sequence number (or -1 if missing)
         //   out string data   : Parsed data payload (or empty if missing)
         // RETURNS       :
         //   void
         //
-        private void ParseClientMessage(string message, out long sequence, out string data)
+        private void ParseClientMessage(
+            string message,
+            out int workerId,
+            out long sequence,
+            out string data)
         {
+            workerId = -1;
             sequence = -1;
             data = string.Empty;
 
             if (string.IsNullOrWhiteSpace(message) == true)
             {
                 return;
+            }
+
+            int workerIndex = message.IndexOf("worker=", StringComparison.OrdinalIgnoreCase);
+            if (workerIndex >= 0)
+            {
+                int workerValueStart = workerIndex + 7;
+                int workerValueEnd = message.IndexOf(',', workerValueStart);
+
+                if (workerValueEnd < 0)
+                {
+                    workerValueEnd = message.Length;
+                }
+
+                string workerText = message.Substring(workerValueStart, workerValueEnd - workerValueStart).Trim();
+                int parsedWorkerId = -1;
+
+                if (int.TryParse(workerText, out parsedWorkerId) == true)
+                {
+                    workerId = parsedWorkerId;
+                }
             }
 
             int seqIndex = message.IndexOf("seq=", StringComparison.OrdinalIgnoreCase);
