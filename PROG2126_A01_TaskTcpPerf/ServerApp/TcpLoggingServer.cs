@@ -46,10 +46,15 @@ namespace ServerApp
         private int _shutdownRequestedFlag;
 
         private long _messageCount;
+        private long _totalLatencyMs;
         private readonly Stopwatch _serverStopwatch;
         private readonly TimeMetrics _serverWriteTiming;
 
         private readonly bool _overwrite;
+
+        // add fields near the other counters
+        private long _totalLatencyTicks;
+        private long _latencySampleCount;
 
 
         /*
@@ -89,7 +94,9 @@ namespace ServerApp
             _serverStopwatch = new Stopwatch();
             _serverWriteTiming = new TimeMetrics();
 
-
+            // initialize in constructor
+            _totalLatencyTicks = 0;
+            _latencySampleCount = 0;
         }
 
         //
@@ -223,7 +230,7 @@ namespace ServerApp
             {
                 if (client.Client.RemoteEndPoint != null)
                 {
-                    remoteEndpoint = client.Client.RemoteEndPoint.ToString();
+                    remoteEndpoint = NormalizeEndpoint(client.Client.RemoteEndPoint.ToString());
                 }
 
                 using (client)
@@ -365,12 +372,19 @@ namespace ServerApp
                     long endTicks = Stopwatch.GetTimestamp();
                     double latencyMs = (endTicks - startTicks) * 1000.0 / Stopwatch.Frequency;
 
-                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    // --- ADDITIONAL LATENCY TRACKING ---
+                    long latencyTicks = endTicks - startTicks;
+
+                    _totalLatencyTicks = _totalLatencyTicks + latencyTicks;
+                    _latencySampleCount = _latencySampleCount + 1;
+                    // ---
+
+                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     string line =
-                        timestamp + " | " +
-                        remoteEndpoint + " | " +
-                        sequence + " | " +
-                        data + " | " +
+                        timestamp + " | " + "IPv4:" +
+                        remoteEndpoint + " | " + "seq=" +
+                        sequence + " | " + "data=" +
+                        data + " | " + "latencyMs=" +
                         latencyMs.ToString("F6");
 
                     _streamWriter.WriteLine(line);
@@ -601,6 +615,17 @@ namespace ServerApp
             Console.WriteLine("Msgs/sec: " + messagesPerSecond.ToString("F3"));
             Console.WriteLine("Bytes/sec: " + bytesPerSecond.ToString("F3"));
             Console.WriteLine("File-write timing: " + _serverWriteTiming.GetSummary(Stopwatch.Frequency));
+            Console.WriteLine("Average latency (ms): " + (_totalLatencyMs / _messageCount).ToString("F3"));
+
+            // inside PrintSummary, compute and print average latency
+            double averageLatencyMs = 0.0;
+
+            if (_latencySampleCount > 0)
+            {
+                averageLatencyMs = (_totalLatencyTicks * 1000.0) / (Stopwatch.Frequency * _latencySampleCount);
+            }
+
+            Console.WriteLine("Avg latency (ms): " + averageLatencyMs.ToString("F6"));
             Console.WriteLine("==========================");
 
             return;
@@ -659,6 +684,31 @@ namespace ServerApp
             }
 
             return;
+        }
+
+        //
+        // FUNCTION      : NormalizeEndpoint
+        // DESCRIPTION   :
+        //   Removes the port from an endpoint string if present.
+        // PARAMETERS    :
+        //   string endpoint : Raw endpoint (e.g., "192.168.68.123:51540")
+        // RETURNS       :
+        //   string : Endpoint without port (e.g., "192.168.68.123")
+        //
+        private string NormalizeEndpoint(string endpoint)
+        {
+            if (string.IsNullOrWhiteSpace(endpoint) == true)
+            {
+                return (string.Empty);
+            }
+
+            int colonIndex = endpoint.LastIndexOf(':');
+            if (colonIndex > 0)
+            {
+                return (endpoint.Substring(0, colonIndex));
+            }
+
+            return (endpoint);
         }
     }
 }

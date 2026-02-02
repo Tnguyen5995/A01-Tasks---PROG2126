@@ -21,7 +21,7 @@ namespace ServerApp
             int exitCode = 0;
 
             int port = AppConstants.DefaultPort;
-            int maxMb = 200;
+            int maxMb = 2;
             string logFilePath = "ServerLog.txt";
             ConcurrencyMode concurrencyMode = ConcurrencyMode.Task;
 
@@ -72,7 +72,7 @@ namespace ServerApp
             out ConcurrencyMode concurrencyMode)
         {
             port = AppConstants.DefaultPort;
-            maxMb = 5;
+            maxMb = 2;
             logFilePath = "ServerLog.txt";
             concurrencyMode = ConcurrencyMode.Task;
 

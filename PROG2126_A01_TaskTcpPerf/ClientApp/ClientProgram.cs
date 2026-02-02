@@ -90,7 +90,7 @@ namespace ClientApp
             bool overwrite = false;
 
 
-            int maxMb = 200;
+            int maxMb = 5;
 
             int index = 0;
             //loop to go thorouhg all command line arguments one by one 
