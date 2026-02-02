@@ -20,7 +20,7 @@ namespace ClientApp
         {
             int exitCode = 0;
 
-            string serverIp = "127.0.0.1";
+            string serverIp = "192.168.68.121";
             int port = AppConstants.DefaultPort;
             int workers = 2;
             int payloadBytes = 64;
@@ -81,7 +81,7 @@ namespace ClientApp
             out int delayMs,
             out ConcurrencyMode concurrencyMode)
         {
-            serverIp = "127.0.0.1"; //default server IP
+            serverIp = "192.168.68.121"; //default server IP
             port = AppConstants.DefaultPort;
             workers = 3; //number of client connections to create
             payloadBytes = 64; //size of each message sent to the server

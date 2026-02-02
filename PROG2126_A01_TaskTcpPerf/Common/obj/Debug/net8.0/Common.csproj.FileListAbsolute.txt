@@ -22,3 +22,15 @@ C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A0
 C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\refint\Common.dll
 C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.pdb
 C:\Conestoga\level4\Windows Network Programming\A01-Tasks---PROG2126\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\ref\Common.dll
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.deps.json
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.dll
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\bin\Debug\net8.0\Common.pdb
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.AssemblyInfoInputs.cache
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.AssemblyInfo.cs
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.csproj.CoreCompileInputs.cache
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.sourcelink.json
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.dll
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\refint\Common.dll
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\Common.pdb
+C:\conestoga\level4\Windows Network Programming\PROG2126_A01_TaskTcpPerf\Common\obj\Debug\net8.0\ref\Common.dll
