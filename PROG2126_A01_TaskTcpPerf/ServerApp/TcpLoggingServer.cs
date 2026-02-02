@@ -275,16 +275,18 @@ namespace ServerApp
                             {
                                 long startTicks = Stopwatch.GetTimestamp();
 
-                                Interlocked.Increment(ref _messageCount);
+                                long sequence;
+                                string data;
 
-                                long endTicks = Stopwatch.GetTimestamp();
-                                double latencyMs = (endTicks - startTicks) * 1000.0 / Stopwatch.Frequency;
+                                ParseClientMessage(requestMessage, out sequence, out data);
 
-                                bool writeOk = AppendLogLine(remoteEndpoint, latencyMs);
+                                bool writeOk = AppendLogLine(remoteEndpoint, sequence, data, startTicks);
                                 if (writeOk == false)
                                 {
                                     RequestShutdown();
                                 }
+
+                                Interlocked.Increment(ref _messageCount);
 
                                 if (_currentFileBytes >= _maxFileBytes)
                                 {
@@ -346,32 +348,36 @@ namespace ServerApp
         //   updating the current file size.
         // PARAMETERS    :
         //   string remoteEndpoint : Client endpoint
-        //   double latencyMs      : Server-side latency in milliseconds
+        //   long sequence         : Client sequence number
+        //   string data           : Client payload data
+        //   long startTicks       : Start ticks for latency measurement
         // RETURNS       :
         //   bool : True if the write succeeded, false otherwise
         //
-        private bool AppendLogLine(string remoteEndpoint, double latencyMs)
+        private bool AppendLogLine(string remoteEndpoint, long sequence, string data, long startTicks)
         {
             bool isSuccessful = false;
 
             try
             {
-                long startTicks = Stopwatch.GetTimestamp();
-
                 lock (_fileLock)
                 {
+                    long endTicks = Stopwatch.GetTimestamp();
+                    double latencyMs = (endTicks - startTicks) * 1000.0 / Stopwatch.Frequency;
+
                     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    string line = timestamp + " | " + remoteEndpoint + " | " + latencyMs.ToString("F3");
+                    string line =
+                        timestamp + " | " +
+                        remoteEndpoint + " | " +
+                        sequence + " | " +
+                        data + " | " +
+                        latencyMs.ToString("F6");
 
                     _streamWriter.WriteLine(line);
                     _streamWriter.Flush();
 
                     _currentFileBytes = _fileStream.Length;
                 }
-
-                long endTicks = Stopwatch.GetTimestamp();
-                long elapsedTicks = endTicks - startTicks;
-                _serverWriteTiming.AddSample(elapsedTicks);
 
                 isSuccessful = true;
             }
@@ -596,6 +602,61 @@ namespace ServerApp
             Console.WriteLine("Bytes/sec: " + bytesPerSecond.ToString("F3"));
             Console.WriteLine("File-write timing: " + _serverWriteTiming.GetSummary(Stopwatch.Frequency));
             Console.WriteLine("==========================");
+
+            return;
+        }
+
+        //
+        // FUNCTION      : ParseClientMessage
+        // DESCRIPTION   :
+        //   Extracts seq and data fields from the client payload.
+        // PARAMETERS    :
+        //   string message : Raw client message
+        //   out long sequence : Parsed sequence number (or -1 if missing)
+        //   out string data   : Parsed data payload (or empty if missing)
+        // RETURNS       :
+        //   void
+        //
+        private void ParseClientMessage(string message, out long sequence, out string data)
+        {
+            sequence = -1;
+            data = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(message) == true)
+            {
+                return;
+            }
+
+            int seqIndex = message.IndexOf("seq=", StringComparison.OrdinalIgnoreCase);
+            if (seqIndex >= 0)
+            {
+                int seqValueStart = seqIndex + 4;
+                int seqValueEnd = message.IndexOf(',', seqValueStart);
+
+                if (seqValueEnd < 0)
+                {
+                    seqValueEnd = message.Length;
+                }
+
+                string seqText = message.Substring(seqValueStart, seqValueEnd - seqValueStart).Trim();
+                long parsedSequence = -1;
+
+                if (long.TryParse(seqText, out parsedSequence) == true)
+                {
+                    sequence = parsedSequence;
+                }
+            }
+
+            int dataIndex = message.IndexOf("data=", StringComparison.OrdinalIgnoreCase);
+            if (dataIndex >= 0)
+            {
+                int dataValueStart = dataIndex + 5;
+
+                if (dataValueStart <= message.Length)
+                {
+                    data = message.Substring(dataValueStart);
+                }
+            }
 
             return;
         }
