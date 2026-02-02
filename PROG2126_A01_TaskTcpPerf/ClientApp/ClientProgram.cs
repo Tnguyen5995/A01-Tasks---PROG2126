@@ -22,7 +22,7 @@ namespace ClientApp
 
             string serverIp = "192.168.68.121";
             int port = AppConstants.DefaultPort;
-            int workers = 2;
+            int workers = 5;
             int payloadBytes = 64;
             int delayMs = 0;
             ConcurrencyMode concurrencyMode = ConcurrencyMode.Task;
